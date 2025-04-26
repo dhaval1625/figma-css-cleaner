@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>Figma CSS Cleaner</title>
+   <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+      * {
+         box-sizing: border-box;
+      }
+
+      body {
+         font-family: 'Inter', sans-serif;
+         background: linear-gradient(145deg, #e0eafc, #cfdef3);
+         margin: 0;
+         padding: 2rem;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+      }
+
+      .container {
+         background: rgba(255, 255, 255, 0.15);
+         backdrop-filter: blur(12px);
+         -webkit-backdrop-filter: blur(12px);
+         border-radius: 20px;
+         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+         padding: 2rem;
+         max-width: 1000px;
+         width: 100%;
+      }
+
+      h2 {
+         text-align: center;
+         font-size: 1.8rem;
+         font-weight: 600;
+         color: #333;
+         margin-bottom: 1.5rem;
+      }
+
+      .editor {
+         display: flex;
+         gap: 1rem;
+         flex-wrap: wrap;
+      }
+
+      textarea {
+         flex: 1;
+         height: calc(100vh - 215px);
+         /* height: 300px; */
+         font-family: inherit;
+         font-size: 16px;
+         line-height: 1.5;
+         padding: 1rem;
+         border: none;
+         border-radius: 12px;
+         background: rgba(255, 255, 255, 0.8);
+         box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+         resize: none;
+      }
+
+      textarea:focus {
+         outline: none;
+         box-shadow: 0 0 6px #4f46e5;
+      }
+
+      .output-container {
+         position: relative;
+         flex: 1;
+         display: flex;
+         flex-direction: column;
+      }
+
+      #copyBtn {
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         background: #4f46e5;
+         color: white;
+         border: none;
+         padding: 6px 12px;
+         border-radius: 8px;
+         font-size: 12px;
+         cursor: pointer;
+         transition: background 0.2s ease;
+      }
+
+      #copyBtn:hover {
+         background: #4338ca;
+      }
+
+      @media (max-width: 768px) {
+         .editor {
+            flex-direction: column;
+         }
+      }
+   </style>
+</head>
+
+<body>
+
+   <div class="container">
+      <h2>🎨 Figma CSS Cleaner</h2>
+      <div class="editor">
+         <textarea id="input" placeholder="Paste Figma CSS here..."></textarea>
+         <div class="output-container">
+            <button id="copyBtn" onclick="copyOutput()">Copy</button>
+            <textarea id="output" placeholder="Cleaned CSS appears here..." readonly></textarea>
+         </div>
+      </div>
+   </div>
+
+   <script>
+      const inputArea = document.getElementById('input');
+      const outputArea = document.getElementById('output');
+
+      inputArea.addEventListener('input', () => {
+         let raw = inputArea.value;
+
+         // Remove var(...) fallback wrappers
+         raw = raw.replace(/var\(--[^,]+,\s*([^)\s]+)\)/g, '$1');
+
+         // Remove unsupported lines like font-feature-settings
+         raw = raw.split('\n').filter(line => !line.includes('font-feature-settings')).join('\n');
+
+         // Wrap font-family values in single quotes (basic case)
+         raw = raw.replace(/font-family:\s*([^;"']+);/g, (match, p1) => {
+            const trimmed = p1.trim();
+            if (trimmed.includes(',') || trimmed.startsWith("'") || trimmed.startsWith('"')) {
+               return match;
+            }
+            return `font-family: '${trimmed}';`;
+         });
+
+         outputArea.value = raw;
+      });
+
+      function copyOutput() {
+         outputArea.select();
+         document.execCommand('copy');
+         document.getElementById('copyBtn').innerText = "Copied!";
+         setTimeout(() => {
+            document.getElementById('copyBtn').innerText = "Copy";
+         }, 1500);
+      }
+   </script>
+
+</body>
+
+</html>
