@@ -3,7 +3,7 @@
 A simple and beautiful web tool to instantly clean messy CSS copied from Figma designs.  
 It automatically removes unsupported CSS lines, simplifies `var()` usages, wraps font-family names properly — all in real-time!
 
-[🚀 Live Demo](https://your-live-demo-link.com)
+[🚀 Live Demo](https://figmacsscleaner.netlify.app/)
 
 ---
 
