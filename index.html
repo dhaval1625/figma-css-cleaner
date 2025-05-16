@@ -40,6 +40,7 @@
          font-weight: 600;
          color: #333;
          margin-bottom: 1.5rem;
+         margin-top: 0;
       }
 
       .editor {
@@ -50,7 +51,7 @@
 
       textarea {
          flex: 1;
-         height: calc(100vh - 215px);
+         height: calc(100vh - 190px);
          /* height: 300px; */
          font-family: inherit;
          font-size: 16px;
@@ -63,9 +64,15 @@
          resize: none;
       }
 
-      textarea:focus {
+      /* textarea:focus {
          outline: none;
          box-shadow: 0 0 6px #4f46e5;
+      } */
+
+      textarea:focus {
+         outline: none;
+         box-shadow: 0 0 18px 3px #4f46e547;
+         border: 2px solid #463de16e;
       }
 
       .output-container {
