@@ -126,24 +126,95 @@
       const outputArea = document.getElementById('output');
 
       inputArea.addEventListener('input', () => {
+         const allowedProperties = [
+            'color',
+            'background',
+            'background-color',
+            'border',
+            'border-radius',
+            'box-shadow',
+            'font-size',
+            'font-weight',
+            'font-style',
+            'font-family',
+            'line-height',
+            'letter-spacing',
+            'text-align',
+            'text-decoration',
+            'margin',
+            'margin-top',
+            'margin-right',
+            'margin-bottom',
+            'margin-left',
+            'padding',
+            'padding-top',
+            'padding-right',
+            'padding-bottom',
+            'padding-left',
+            'display',
+            'justify-content',
+            'align-items',
+            'width',
+            'height',
+            'max-width',
+            'min-width',
+            'max-height',
+            'min-height',
+            'overflow',
+            'z-index',
+            'position',
+            'top',
+            'right',
+            'bottom',
+            'left',
+            'gap',
+            'flex',
+            'flex-direction',
+            'flex-shrink',
+            'flex-grow',
+            'flex-basis',
+            'flex-wrap',
+            'align-self',
+            'text-transform',
+            'cursor',
+            'visibility',
+            'opacity',
+            'transition',
+            'transform',
+            'white-space',
+            'word-break',
+            'text-overflow',
+            'box-sizing',
+            'overflow-x',
+            'overflow-y',
+            'pointer-events',
+         ];
+
          let raw = inputArea.value;
 
          // Remove var(...) fallback wrappers
          raw = raw.replace(/var\(--[^,]+,\s*([^)\s]+)\)/g, '$1');
 
-         // Remove unsupported lines like font-feature-settings
-         raw = raw.split('\n').filter(line => !line.includes('font-feature-settings')).join('\n');
-
-         // Wrap font-family values in single quotes (basic case)
-         raw = raw.replace(/font-family:\s*([^;"']+);/g, (match, p1) => {
-            const trimmed = p1.trim();
-            if (trimmed.includes(',') || trimmed.startsWith("'") || trimmed.startsWith('"')) {
-               return match;
-            }
-            return `font-family: '${trimmed}';`;
+         // Split into lines and filter
+         const lines = raw.split('\n').filter(line => {
+            const match = line.match(/^\s*([a-zA-Z-]+)\s*:/);
+            if (!match) return false;
+            const prop = match[1].trim();
+            return allowedProperties.includes(prop);
          });
 
-         outputArea.value = raw;
+         // Wrap font-family values in single quotes if needed
+         const cleaned = lines.map(line => {
+            return line.replace(/font-family:\s*([^;"']+);/g, (match, p1) => {
+               const trimmed = p1.trim();
+               if (trimmed.includes(',') || trimmed.startsWith("'") || trimmed.startsWith('"')) {
+                  return match;
+               }
+               return `font-family: '${trimmed}';`;
+            });
+         });
+
+         outputArea.value = cleaned.join('\n');
       });
 
       function copyOutput() {
